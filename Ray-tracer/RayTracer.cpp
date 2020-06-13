@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 {
 	srand(time(0));
 
-	int nx = 200, ny = 100, ns = 100; // ImageWidth, ImageHeight, Samples
+	int nx = 100, ny = 100, ns = 500; // ImageWidth, ImageHeight, Samples
 	char *data = nullptr;
 	data = new char[nx*ny*3]; // Image data
 
