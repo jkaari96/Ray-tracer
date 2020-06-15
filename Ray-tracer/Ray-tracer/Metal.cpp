@@ -1,7 +1,7 @@
 #include "Metal.h"
 #include "Sphere.h"
 
-Metal::Metal(const Vec3& a, float f = 0.0f) {
+Metal::Metal(const Vec3& a, float f = 0.0f) : albedo(a) {
 	if (f < 1.0f) fuzziness = f; else fuzziness = 1.0f;
 }
 

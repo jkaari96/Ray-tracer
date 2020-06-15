@@ -56,6 +56,20 @@ Hitable *randomScene() {
 	return new HitableList(list, i);
 }
 
+Hitable* simpleScene() {
+	int n = 4;
+	Hitable** list = new Hitable * [n + 1];
+	list[0] = new Sphere(Vec3(0, -1000, 0), 1000, new Lambertian(Vec3(0.5, 0.5, 0.5)));
+
+	int i = 1;
+
+	list[i++] = new Sphere(Vec3(0, 1, 0), 1.0f, new Dielectric(1.5f));
+	list[i++] = new Sphere(Vec3(-4, 1, 0), 1.0f, new Lambertian(Vec3(0.4, 0.2, 0.1)));
+	list[i++] = new Sphere(Vec3(-6, 1, 0), 1.0f, new Metal(Vec3(0.7, 0.6, 0.5), 0.0));
+
+	return new HitableList(list, i);
+}
+
 Vec3 color(const Ray& r, Hitable *world, int depth) {
 	hitRecord rec;
 	if (world->hit(r, 0.001f, FLT_MAX, rec)) {
@@ -68,10 +82,12 @@ Vec3 color(const Ray& r, Hitable *world, int depth) {
 			return Vec3(0.0f, 0.0f, 0.0f);
 		}
 	}
-
-	Vec3 unitDirection = unitVector(r.direction());
-	float t = 0.5f*(unitDirection.y() + 1.0f);
-	return (1.0f - t)*Vec3(1.0f, 1.0f, 1.0f) + t * Vec3(0.5f, 0.7f, 1.0f);
+	else
+	{
+		Vec3 unitDirection = unitVector(r.direction());
+		float t = 0.5f * (unitDirection.y() + 1.0f);
+		return (1.0f - t) * Vec3(1.0f, 1.0f, 1.0f) + t * Vec3(0.5f, 0.7f, 1.0f);
+	}
 }
 
 void renderThread(int threadIndex, int startRow, int endRow, int width, int height, int samples, Camera& cam, Hitable* world, char* data) {
@@ -114,7 +130,7 @@ int main(int argc, char* argv[])
 {
 	srand(time(0));
 
-	int nx = 100, ny = 100, ns = 500; // ImageWidth, ImageHeight, Samples
+	int nx = 1920, ny = 1080, ns = 500; // ImageWidth, ImageHeight, Samples
 	char *data = nullptr;
 	data = new char[nx*ny*3]; // Image data
 
@@ -122,7 +138,7 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	Hitable* world = randomScene(); // Randomly generate a scene
+	Hitable* world = randomScene();
 
 	Vec3 lookFrom = Vec3(6, 1, -5);
 	Vec3 lookAt = Vec3(-4, 1, 0);
@@ -131,7 +147,7 @@ int main(int argc, char* argv[])
 
 	Camera cam(lookFrom, lookAt, Vec3(0, 1, 0), 32.0f, float(nx) / float(ny), aperture, distToFocus);
 
-	const int numThreads = 2;
+	const int numThreads = 4;
 	std::list<std::thread> threads;
 
 	for (int i = 0; i < numThreads; i++) {
