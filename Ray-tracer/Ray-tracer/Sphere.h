@@ -3,7 +3,6 @@
 
 #include "Globals.h"
 #include "Hitable.h"
-#include "Material.h"
 #include <random>
 
 class Sphere : public Hitable {
